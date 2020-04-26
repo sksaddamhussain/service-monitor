@@ -60,7 +60,7 @@ do
 			logger -ip syslog.info "Entering rescue mode for service $SERVICE" -t "service-mon"
 			case $SERVICE in
 				sshd)
-					cat $SERVICE_HOME/sshd_conf > /etc/ssh/test-sshd_conf
+					cat $SERVICE_HOME/sshd_conf > /etc/ssh/sshd_conf
 					STOP_START_SERVICE $SMANAGER $SERVICE
 					;;
 				rsyslog)
@@ -70,7 +70,7 @@ do
 				network)
 					for MYINTERFACE in `ip link show | grep 'eth[[:digit:]]\|enp[[:digit:]]\|ens[[:digit:]]' | awk '{print $2}' | tr -d ':'`
 					do
-						cat $SERVICE_HOME/ifcfg-$MYINTERFACE > /etc/test-ifcfg-$MYINTERFACE
+						cat $SERVICE_HOME/ifcfg-$MYINTERFACE > /etc/ifcfg-$MYINTERFACE
 					done
 					STOP_START_SERVICE $SMANAGER $SERVICE
 					;;
