@@ -8,7 +8,7 @@ MODE="$1"
 if [ "$MODE" == "init" ]
 then
 	echo "Initializing golden configuration files"
-	cp /etc/ssh/sshd_config /etc/rsyslog.conf /etc/sysconfig/network-scripts/ifcfg-e* /etc/sysconfig/network-sccripts/route-e* $SERVICE_HOME/ 
+	cp /etc/ssh/sshd_config /etc/rsyslog.conf /etc/sysconfig/network-scripts/ifcfg-e* /etc/sysconfig/network-scripts/route-e* $SERVICE_HOME/ 
 fi
 
 
@@ -54,7 +54,7 @@ do
 		echo "Service start initiated......"
 		STOP_START_SERVICE $SMANAGER $SERVICE
 		#sleep 10
-		#MY_SERVICE="stopped"
+		MY_SERVICE="stopped"
 		if [ "$MY_SERVICE" != "running" ]
 		then
 			logger -ip syslog.info "Entering rescue mode for service $SERVICE" -t "service-mon"
