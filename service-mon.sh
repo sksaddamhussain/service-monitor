@@ -49,7 +49,30 @@ MY_SERVICE=""
 CHECK_SERVICE(){
 	if [ "$1" == "init" ]
 	then
-		MY_SERVICE=$(service $2 status | grep -i 'running\|stopped' | awk '{print $3}' | sed 's/[()]//g')
+		if [ "$2" == "network" ]
+		then
+			MY_INT_LIST=(`ip link show | grep 'eth[[:digit:]]\|enp[[:digit:]]\|ens[[:digit:]]' | awk '{print $2}' | tr -d ':'`)
+			MY_COUNTER=0
+			for MY_INT in ${MY_INT_LIST[*]}
+			do
+				INT_STATUS=`ip -4 a s ${MY_INT} | grep inet | wc -l`
+				((MY_COUNTER=MY_COUNTER+INT_STATUS))
+			done
+			if [ "$MY_COUNTER" == "${#MY_INT_LIST[*]}" ]
+			then
+				MY_SERVICE="running"
+			else
+				MY_SERVICE="stopped"
+			fi
+		else
+                        MY_SERVICE_STATUS=$(service $2 status | grep -i 'running' | wc -l)
+                        if [ "${MY_SERVICE_STATUS}" == "1" ]
+                        then    
+                                MY_SERVICE="running"
+                        else    
+                                MY_SERVICE="stopped"
+                        fi
+		fi
 	elif [ "$1" == "systemd" ]
 	then
 		MY_SERVICE=$(systemctl status $2 | grep -i 'running\|dead\|Active (exited)' | awk '{print $3}' | sed 's/[()]//g')
@@ -66,12 +89,14 @@ STOP_START_SERVICE(){
 	then
 		service $2 stop
 		service $2 start
-		MY_SERVICE=$(service $2 status | grep -i 'running\|stopped' | awk '{print $3}' | sed 's/[()]//g')
+		CHECK_SERVICE $1 $2
+		#MY_SERVICE=$(service $2 status | grep -i 'running\|stopped' | awk '{print $3}' | sed 's/[()]//g')
 	elif [ "$1" == "systemd" ]
 	then
 		systemctl stop $2
 		systemctl start $2
-		MY_SERVICE=$(systemctl status $2 | grep -i 'running\|dead' | awk '{print $3}' | sed 's/[()]//g')
+		CHECK_SERVICE $1 $2
+		#MY_SERVICE=$(systemctl status $2 | grep -i 'running\|dead' | awk '{print $3}' | sed 's/[()]//g')
 	fi
 	logger -ip syslog.info "Attempted restart of $2 and status after restart is $MY_SERVICE" -t "service-mon"
 }
