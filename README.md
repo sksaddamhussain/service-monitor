@@ -32,7 +32,7 @@ recover   : This mode is used to recover any/all of the above listed services wi
 
     # service-mon.sh recover network
 
-    # service-mon.sh recover all  # This is recover all services (sshd, rsyslog and network) based on its Golden configuration
+    # service-mon.sh recover all  # This is used to recover all services (sshd, rsyslog and network) based on its Golden configuration
 
 # How to run service-mon in service monitoring mode?
 
